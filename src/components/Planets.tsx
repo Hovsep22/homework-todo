@@ -1,20 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { fetchUsers, setPage, setSearch } from "../features/users/userSlice";
+import { fetchPlanets, setPage } from "../features/planets/planetSlice";
 
-const UserList: React.FC = () => {
+const Planets: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { users, page, totalPages, loading, error,searchText } = useAppSelector(
-    (state) => state.users
+  const { planets, page, totalPages, loading, error } = useAppSelector(
+    (state) => state.planets
   );
 
+  
   useEffect(() => {
-    dispatch(fetchUsers({
-      page,
-      searchText
-    }));
-  }, [dispatch, page,searchText]);
+    dispatch(fetchPlanets(page));
+  }, [dispatch, page]);
 
   if (loading) {
     return <div className="loading">Loading...</div>;
@@ -36,20 +34,15 @@ const UserList: React.FC = () => {
     }
   };
 
-
-  
-
-  
   return (
     <div className="users">
-      <h1>Users</h1>
-      <input type="text" value={searchText} onChange={(e)=>dispatch(setSearch(e.target.value))}/>
+      <h1>Planets</h1>
       <div>
-        {users.map((user: any) => (
-          <div key={user.name} className="user-card">
-            <h3>{user.name}</h3>
-            <p>Height: {user.height}</p>
-            <p>Mass: {user.mass}</p>
+        {planets.map((planet: any) => (
+          <div key={planet.name} className="user-card">
+            <h3>{planet.name}</h3>
+            <p>Height: {planet.terrain}</p>
+            <p>population: {planet.population}</p>
           </div>
         ))}
       </div>
@@ -63,4 +56,4 @@ const UserList: React.FC = () => {
   );
 };
 
-export default UserList;
+export default Planets;

@@ -1,5 +1,5 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
 
 interface UserState {
   users: unknown[];
@@ -7,6 +7,7 @@ interface UserState {
   totalPages: number;
   loading: boolean;
   error: string | null;
+  searchText: string;
 }
 
 const initialState: UserState = {
@@ -15,25 +16,29 @@ const initialState: UserState = {
   totalPages: 1,
   loading: false,
   error: null,
+  searchText: '',
 };
 
 const fetchUsers = createAsyncThunk(
-  "users/fetchUsers",
-  async (page: number) => {
+  'users/fetchUsers',
+  async ({ page, searchText }: { page: number; searchText: string }) => {
     const response = await axios.get(
-      `https://swapi.dev/api/people/?page=${page}`
+      `https://swapi.dev/api/people/?page=${page}&search=${searchText}`,
     );
 
     return response.data;
-  }
+  },
 );
 
 const userSlice = createSlice({
-  name: "users",
+  name: 'users',
   initialState,
   reducers: {
     setPage(state, action) {
       state.page = action.payload;
+    },
+    setSearch(state, action) {
+      state.searchText = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -50,12 +55,12 @@ const userSlice = createSlice({
 
     builder.addCase(fetchUsers.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.error.message || "Failed to fetch users";
+      state.error = action.error.message || 'Failed to fetch users';
     });
   },
 });
 
-export const { setPage } = userSlice.actions;
+export const { setPage, setSearch } = userSlice.actions;
 export { fetchUsers };
 
 export default userSlice.reducer;
